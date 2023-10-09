@@ -15,6 +15,7 @@ EXPIRED_TIME = 3600
 
 #token black list
 token_blacklist = set()
+SUPPORT_FRONT_END = bool(os.getenv("SUPPORT_FRONT_END").lower() == 'true')
 
 # Function to generate a JWT token
 def generate_token(user):
@@ -55,7 +56,14 @@ def logout(token):
 
 @app.route("/",methods=['GET'])
 def home():
-    return render_template('index.html')
+    if SUPPORT_FRONT_END:
+        return render_template('index.html')
+    else:
+        response = {
+            "status": SUCCESS_MESSENGER,
+            "messenger": "WELLCOME HOME!!"
+        }
+        return jsonify(response)
 
 def checkdatabase(user):
     with open("data.json", 'r') as file:
@@ -94,11 +102,14 @@ def login():
                     "status": SUCCESS_MESSENGER,
                     "message": "Success login with %s and role %s"%(user.getUsername(), user.getRole())
                 }
-                return jsonify(response)
+                if SUPPORT_FRONT_END:
+                    return render_template('welcome.html',user=user)
+                else:
+                    return jsonify(response)
             else:
                 return jsonify({'error': 'Invalid credentials/Wrong username:password'}), 401
     except Exception as ex:
-        print("Error: %s", str(ex))
+        print("Error: %s"%(str(ex)))
         return jsonify({'error': 'Have error from server'}), 500
 
 # Route for protected resource
@@ -128,7 +139,7 @@ def check_login_as_admin():
         else:
             return jsonify({'error': 'You use wrong token with admin'}), 401
     except Exception as ex:
-        print("Error: %s",str(ex))
+        print("Error: %s"%(str(ex)))
         return jsonify({'error': 'Have something wrong from server'}), 500
 
 # Route for logout (blacklisting token)

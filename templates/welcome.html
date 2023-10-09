@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='welcome.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.138.3/examples/js/controls/OrbitControls.js"></script>
+    <title>Welcome {{user.username}}</title>
+</head>
+
+<body>
+    <div id="container"></div>
+     <script>
+        var userName = {{ user.username|tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='text_three.js') }}"></script>
+</body>
+
+</html>
