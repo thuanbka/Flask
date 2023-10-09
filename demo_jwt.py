@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify, render_template
 import jwt
 from datetime import datetime, timedelta
 from entity.user import User
@@ -55,11 +55,7 @@ def logout(token):
 
 @app.route("/",methods=['GET'])
 def home():
-    response = {
-        "status": SUCCESS_MESSENGER,
-        "messenger": "WELLCOME HOME!!"
-    }
-    return jsonify(response)
+    return render_template('index.html')
 
 def checkdatabase(user):
     with open("data.json", 'r') as file:
