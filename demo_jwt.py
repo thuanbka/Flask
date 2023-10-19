@@ -7,15 +7,16 @@ import os
 import util
 import time
 from threading import Thread, Event
-
+import typing as t
 app = Flask(__name__)
+app.config.from_pyfile('app.config')
 app.config['SECRET_KEY'] = util.sha256_encode(os.getenv("SECRET_KEY"))
 SUCCESS_MESSENGER = "sucsess"
 EXPIRED_TIME = 3600
 
 #token black list
 token_blacklist = set()
-SUPPORT_FRONT_END = bool(os.getenv("SUPPORT_FRONT_END").lower() == 'true')
+SUPPORT_FRONT_END = app.config.get("SUPPORT_FRONT_END")
 
 # Function to generate a JWT token
 def generate_token(user):
@@ -56,14 +57,12 @@ def logout(token):
 
 @app.route("/",methods=['GET'])
 def home():
-    if SUPPORT_FRONT_END:
-        return render_template('index.html')
-    else:
-        response = {
-            "status": SUCCESS_MESSENGER,
-            "messenger": "WELLCOME HOME!!"
-        }
-        return jsonify(response)
+    response = {
+        "status": SUCCESS_MESSENGER,
+        "messenger": "WELLCOME HOME!!",
+        "view": "index.html"
+    }
+    return hande_before_response(response)
 
 def checkdatabase(user):
     with open("data.json", 'r') as file:
@@ -100,17 +99,15 @@ def login():
                 response = {
                     'token': token,
                     "status": SUCCESS_MESSENGER,
-                    "message": "Success login with %s and role %s"%(user.getUsername(), user.getRole())
+                    "message": "Success login with %s and role %s"%(user.getUsername(), user.getRole()),
+                    "view": "welcome.html"
                 }
-                if SUPPORT_FRONT_END:
-                    return render_template('welcome.html',user=user)
-                else:
-                    return jsonify(response)
+                return hande_before_response(response,user=user)
             else:
-                return jsonify({'error': 'Invalid credentials/Wrong username:password'}), 401
+                return hande_before_response({'error': 'Invalid credentials/Wrong username:password'}), 401
     except Exception as ex:
         print("Error: %s"%(str(ex)))
-        return jsonify({'error': 'Have error from server'}), 500
+        return hande_before_response({'error': 'Have error from server'}), 500
 
 # Route for protected resource
 @app.route('/protected', methods=['POST'])
@@ -161,7 +158,6 @@ def clean_expired_tokens():
     while not exit_event.is_set():
         print("Running remove auto token black list.....")
         time.sleep(EXPIRED_TIME)  # Sleep for EXPIRED_TIME seconds
-        now = datetime.utcnow()
         expired_tokens = {token for token in token_blacklist if 'exp' not in verify_token(token)}
         token_blacklist.difference_update(expired_tokens)
         print("Remove: %s"%(str(expired_tokens)))
@@ -169,6 +165,15 @@ def clean_expired_tokens():
 # Start the clean-up thread
 cleanup_thread = Thread(target=clean_expired_tokens)
 cleanup_thread.start()
+
+
+def hande_before_response(data, **context: t.Any):
+    if SUPPORT_FRONT_END and 'view' in data:
+        return render_template(data['view'], **context)
+    else:
+        if 'view' in data:
+            del data["view"]
+        return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080, host='0.0.0.0')

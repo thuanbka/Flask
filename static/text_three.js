@@ -90,8 +90,8 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.enableZoom = false;
-controls.minPolarAngle = Math.PI / 2;
-controls.maxPolarAngle = Math.PI / 2;
+// controls.minPolarAngle = Math.PI / 2;
+// controls.maxPolarAngle = Math.PI / 2;
 
 // 7. Request animation frame.
 function animate() {
