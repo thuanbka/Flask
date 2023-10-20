@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 import jwt
 from datetime import datetime, timedelta
 from entity.user import User
@@ -50,10 +50,10 @@ def logout(token):
     if 'username' in verification_result:
         token_blacklist.add(token)
         print(f'Token {token} has been blacklisted')
-        return jsonify({'message': 'Logout successful'})
+        return handle_before_response({'message': 'Logout successful'})
 
     else:
-        return jsonify({'error': verification_result}), 401
+        return handle_before_response({'error': verification_result}), 401
 
 @app.route("/",methods=['GET'])
 def home():
@@ -62,7 +62,7 @@ def home():
         "messenger": "WELLCOME HOME!!",
         "view": "index.html"
     }
-    return hande_before_response(response)
+    return handle_before_response(response)
 
 def checkdatabase(user):
     with open("data.json", 'r') as file:
@@ -83,10 +83,10 @@ def login():
         elif request.is_json:
             data = request.get_json()
         else:
-            return jsonify({'error': 'Invalid data format'}), 400
+            return handle_before_response({'error': 'Invalid data format'}), 400
 
         if not data or 'username' not in data or 'password' not in data:
-            return jsonify({'error': 'Invalid data'}), 401
+            return handle_before_response({'error': 'Invalid data'}), 401
         else:
             password = util.sha256_encode(data.get('password'))
             username = data.get('username')
@@ -97,30 +97,49 @@ def login():
                 # For simplicity, let's assume any username/password combination is valid
                 token = generate_token(user)
                 response = {
-                    'token': token,
+                    "token": token,
                     "status": SUCCESS_MESSENGER,
                     "message": "Success login with %s and role %s"%(user.getUsername(), user.getRole()),
-                    "view": "welcome.html"
+                    "user_name": user.username
                 }
-                return hande_before_response(response,user=user)
+                if SUPPORT_FRONT_END:
+                    return redirect(url_for('welcome', response = json.dumps(response)))
+                else:
+                    return handle_before_response(response)
             else:
-                return hande_before_response({'error': 'Invalid credentials/Wrong username:password'}), 401
+                return handle_before_response({'error': 'Invalid credentials/Wrong username:password'}), 401
     except Exception as ex:
         print("Error: %s"%(str(ex)))
-        return hande_before_response({'error': 'Have error from server'}), 500
+        return handle_before_response({'error': 'Have error from server'}), 500
+
+# Router for welcome resource
+@app.route('/welcome', methods=["GET"])
+def welcome():
+    response = None
+    if "response" in request.args:
+        response = json.loads(request.args.get("response"))
+    user = User()
+    if response != None:
+        user.setUsername(response["user_name"])
+        del response["user_name"]
+    else:
+        response = dict()
+        user.setUsername("Noname_user")
+    response["view"] = "welcome.html"
+    return handle_before_response(response,user=user)
 
 # Route for protected resource
 @app.route('/protected', methods=['POST'])
 def protected():
     token = request.headers.get('Authorization')
     if not token:
-        return jsonify({'error': 'Token is missing'}), 401
+        return handle_before_response({'error': 'Token is missing'}), 401
 
     verification_result = verify_token(token)
     if 'username' in verification_result:
-        return jsonify({'message': 'Access granted!'})
+        return handle_before_response({'message': 'Access granted!'})
     else:
-        return jsonify({'error': verification_result}), 401
+        return handle_before_response({'error': verification_result}), 401
 
 # Route for admin resource
 @app.route('/admin', methods=['POST'])
@@ -128,16 +147,16 @@ def check_login_as_admin():
     try:
         token = request.headers.get('Authorization')
         if not token:
-            return jsonify({'error': 'Token is missing'}), 401
+            return handle_before_response({'error': 'Token is missing'}), 401
 
         verification_result = verify_token(token)
         if 'username' in verification_result and 'role' in verification_result and verification_result['role'] == 'admin':
-            return jsonify({'message': 'Access as a admin granted!'})
+            return handle_before_response({'message': 'Access as a admin granted!'})
         else:
-            return jsonify({'error': 'You use wrong token with admin'}), 401
+            return handle_before_response({'error': 'You use wrong token with admin'}), 401
     except Exception as ex:
         print("Error: %s"%(str(ex)))
-        return jsonify({'error': 'Have something wrong from server'}), 500
+        return handle_before_response({'error': 'Have something wrong from server'}), 500
 
 # Route for logout (blacklisting token)
 @app.route('/logout', methods=['POST'])
@@ -145,8 +164,7 @@ def user_logout():
     token = request.headers.get('Authorization')
     
     if not token:
-        return jsonify({'error': 'Token is missing'}), 400
-
+        return handle_before_response({'error': 'Token is missing'}), 400
 
     return logout(token)
 
@@ -167,7 +185,7 @@ cleanup_thread = Thread(target=clean_expired_tokens)
 cleanup_thread.start()
 
 
-def hande_before_response(data, **context: t.Any):
+def handle_before_response(data, **context: t.Any):
     if SUPPORT_FRONT_END and 'view' in data:
         return render_template(data['view'], **context)
     else:
