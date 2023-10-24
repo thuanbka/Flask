@@ -8,8 +8,31 @@ import util
 import time
 from threading import Thread, Event
 import typing as t
+from dotenv import load_dotenv
+import logging
+import sys
+import posixpath
+
+
+
+def cdn_url_builder(_error, endpoint, values):
+    if endpoint != "cdn":
+        return None
+    from flask import current_app as app
+
+    return posixpath.join(app.config["CDN_DOMAIN"], "static", values["filename"])
+
 app = Flask(__name__)
 app.config.from_pyfile('app.config')
+app.url_build_error_handlers.append(cdn_url_builder)
+
+# Configure logging to go to the standard output
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.DEBUG)  # Set the desired logging level
+# Load environment variables from .env file during testing
+if app.config['TESTING']:
+    load_dotenv()
+
 app.config['SECRET_KEY'] = util.sha256_encode(os.getenv("SECRET_KEY"))
 SUCCESS_MESSENGER = "sucsess"
 EXPIRED_TIME = 3600
@@ -59,7 +82,16 @@ def logout(token):
 def home():
     response = {
         "status": SUCCESS_MESSENGER,
-        "messenger": "WELLCOME HOME!!",
+        "message": "WELLCOME HOME!!",
+        "view": "home.html"
+    }
+    return handle_before_response(response)
+
+@app.route("/login",methods=['GET'])
+def get_login():
+    response = {
+        "status": SUCCESS_MESSENGER,
+        "message": "Please login!!",
         "view": "index.html"
     }
     return handle_before_response(response)
@@ -115,15 +147,17 @@ def login():
 # Router for welcome resource
 @app.route('/welcome', methods=["GET"])
 def welcome():
-    response = None
+    response = {
+        "status": SUCCESS_MESSENGER,
+        "message": "WELCOME to WELCOME",
+    }
     if "response" in request.args:
         response = json.loads(request.args.get("response"))
     user = User()
-    if response != None:
+    if response != None and "user_name" in response:
         user.setUsername(response["user_name"])
         del response["user_name"]
     else:
-        response = dict()
         user.setUsername("Noname_user")
     response["view"] = "welcome.html"
     return handle_before_response(response,user=user)
@@ -182,7 +216,7 @@ def clean_expired_tokens():
 
 # Start the clean-up thread
 cleanup_thread = Thread(target=clean_expired_tokens)
-cleanup_thread.start()
+#cleanup_thread.start()
 
 
 def handle_before_response(data, **context: t.Any):
@@ -197,5 +231,5 @@ if __name__ == '__main__':
     app.run(debug=True, port=8080, host='0.0.0.0')
     
 # Wait for the thread to finish before exiting the application
-exit_event.set()
-cleanup_thread.join()
+# exit_event.set()
+# cleanup_thread.join()

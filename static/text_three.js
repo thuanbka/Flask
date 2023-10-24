@@ -10,7 +10,7 @@
 */
 let text_3D = "Welcome " + userName;
 const { FontLoader, OrbitControls, TextGeometry } = THREE;
-const container = document.querySelector('#container');
+const container = document.querySelector('#container-text-three-js');
 
 // 1. Create WebGL Renderer.
 
@@ -51,7 +51,9 @@ function addSpotlight(x, y, z) {
 }
 
 // 5. Add text geometry.
-addText(text_3D, 20, new THREE.Vector3(0, 25, -5));
+const texts = [];
+const fontSize = container.clientWidth / 90;
+addText(text_3D, fontSize, new THREE.Vector3(0, 25, -5));
 function addText(text3D, fontSize, position) {
     const fontLoader = new FontLoader().load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', (font) => {
         const words = text3D.split(' '); // Split the text into words
@@ -76,6 +78,7 @@ function addText(text3D, fontSize, position) {
             }));
             text.position.set(position.x, currentY, position.z);
             scene.add(text);
+            texts.push(text)
             // Increase the Y position for the next word
             currentY -= fontSize * 1.5; // Adjust the factor as needed for spacing
         });
@@ -103,7 +106,16 @@ animate();
 
 // 8. Update scene on resize.
 window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    camera.aspect = containerWidth / containerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(containerWidth, containerHeight);
+    const fontSize = container.clientWidth / 90;
+    for(const text of texts)
+    {
+        scene.remove(text);
+    }
+    texts.length = 0
+    addText(text_3D, fontSize, new THREE.Vector3(0, 25, -5));
 });
