@@ -1,11 +1,28 @@
 import hashlib
 import sys
+import requests
 
+def get_github_file(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.text
+    else:
+        return None
+    
 def sha256_encode(input_string):
     sha256_hash = hashlib.sha256()
     sha256_hash.update(input_string.encode('utf-8'))
     hashed_string = sha256_hash.hexdigest()
     return hashed_string
+
+def get_license(license):
+
+    github_url = "https://raw.githubusercontent.com/thuanbka/license/main/%s.txt"%(license)
+    file_content = get_github_file(github_url)
+    if file_content is not None:
+        return file_content
+    else:
+        return None
 
 if __name__ == "__main__":
     number_args = len(sys.argv)
@@ -17,6 +34,13 @@ if __name__ == "__main__":
                 print(sha256_encode(code))
             else:
                 print("Please enter a string which you want to encode.")
+        elif sys.argv[1] == "get_license":
+            if number_args == 3:
+                license = sys.argv[2]
+                print("License for '%s':"%(license))
+                print(get_license(license))
+            else:
+                print("Please enter a string which you want to get license.")
 
     else:
         print("...................")
