@@ -13,7 +13,7 @@
 <body>
     {% block header%}
     {% endblock %}
-    <main class="main" id="top">
+    <main class="main" id={% block main_id %}{% endblock %}>
         {% block body %}
         {% endblock %}
     </main>
