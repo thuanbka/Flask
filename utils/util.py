@@ -1,6 +1,23 @@
 import requests
 import hashlib
 import sys
+import os
+from config import UPLOAD_DIR
+
+def upload_file(file):
+    try:
+        current_directory = os.getcwd()
+        upload_folder = os.path.join(current_directory, 'uploads')
+        if os.path.exists(UPLOAD_DIR):
+            upload_folder = UPLOAD_DIR
+        else:
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
+        file.save(os.path.join(upload_folder, file.filename))
+        return True
+    except Exception as ex:
+        print(f"Error uploading file: {ex}")
+        return False
 
 def get_github_file(url):
     try:
@@ -13,7 +30,6 @@ def get_github_file(url):
         print(ex)
         return None
 
-    
 def sha256_encode(input_string):
     sha256_hash = hashlib.sha256()
     sha256_hash.update(input_string.encode('utf-8'))

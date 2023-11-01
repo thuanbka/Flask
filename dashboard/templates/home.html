@@ -11,7 +11,7 @@
 {% block body %}
 <div id="container-text-three-js"></div>
 <script>
-    var userName = "HOME";
+    var userName = "{{text | default('HOME') }}";
 </script>
 <script src="{{ url_for('static', filename='text_three.js') }}"></script>
 {% endblock %}
