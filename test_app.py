@@ -1,13 +1,15 @@
 # test_app.py
 import unittest
 import json
-from demo_jwt import app
+from app import create_app
 
 class FlaskTest(unittest.TestCase):
 
     def setUp(self):
-        app.config['TESTING'] = True
-        self.app = app.test_client()     
+        app  = create_app()
+        app.config["TESTING"] = True
+        app.config["SUPPORT_FRONT_END"] = False
+        self.app = app.test_client()
 
     def test_home(self):
         response = self.app.get('/')

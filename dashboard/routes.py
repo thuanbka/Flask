@@ -8,7 +8,6 @@ import time
 from threading import Thread, Event
 import typing as t
 from flask import current_app as app
-from config import SUPPORT_FRONT_END
 
 bp_dashboard = Blueprint("dashboard", __name__, template_folder="templates")
 SUCCESS_MESSENGER = "sucsess"
@@ -85,6 +84,7 @@ def checkdatabase(user):
 @bp_dashboard.route('/login', methods=['POST'])
 def login():
     try:
+        SUPPORT_FRONT_END = app.config["SUPPORT_FRONT_END"]
         if request.form:
             data = request.form
         elif request.is_json:
@@ -195,6 +195,7 @@ cleanup_thread = Thread(target=clean_expired_tokens)
 
 
 def handle_before_response(data, **context: t.Any):
+    SUPPORT_FRONT_END = app.config["SUPPORT_FRONT_END"]
     if SUPPORT_FRONT_END and 'view' in data:
         return render_template(data['view'], **context)
     else:
