@@ -35,5 +35,5 @@ if __name__ == '__main__':
     #Create a app
     server = Flask(__name__)
     server.wsgi_app = create_app()
-    server.run(debug=True, port=8080, host='0.0.0.0')
+    server.run(debug=True, port=server.wsgi_app.config["PORT"], host=server.wsgi_app.config["HOST_NAME"])
     

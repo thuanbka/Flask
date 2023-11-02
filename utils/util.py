@@ -3,11 +3,40 @@ import hashlib
 import sys
 import os
 from config import UPLOAD_DIR
+from config import UPLOAD_DIR_DRIVE_ID
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+gauth = GoogleAuth()
+drive = GoogleDrive(gauth)
+
+def upload_to_google_drive(file):
+    try:
+        file_name = file.filename
+        # Create a new file on Google Drive with the specified title and parent folder ID
+        drive_file = drive.CreateFile({'title': file_name, 'parents': [{'id': UPLOAD_DIR_DRIVE_ID}]})
+        # Upload the file content to Google Drive
+        upload_folder = UPLOAD_DIR
+        if os.path.exists(UPLOAD_DIR):
+            upload_folder = UPLOAD_DIR
+        else:
+            current_directory = os.getcwd()
+            upload_folder = os.path.join(current_directory, 'uploads')
+        file_path = os.path.join(upload_folder, file_name)
+        drive_file.SetContentFile(file_path)
+        drive_file.Upload()
+        # Get the file ID
+        file_id = drive_file.get('id')
+        # Construct the file link
+        file_link = f'https://drive.google.com/file/d/{file_id}/view'
+        # Now file_link contains the link to the uploaded file
+        print(f'Link to the uploaded file: {file_link}')
+        return True
+    except Exception as ex:
+        print(ex)
+        return False
 
 def upload_file(file):
     try:
-        current_directory = os.getcwd()
-        upload_folder = os.path.join(current_directory, 'uploads')
         if os.path.exists(UPLOAD_DIR):
             upload_folder = UPLOAD_DIR
         else:

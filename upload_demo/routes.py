@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, render_template, request
 import typing as t
 from utils import util
 from flask import current_app as app
+
 SUCCESS_MESSENGER = "sucsess"
 FAIL_MESSENGER = "fail"
 bp_upload = Blueprint("upload", __name__, template_folder="templates")
@@ -35,14 +36,26 @@ def upload_file():
 
     if file.filename == '':
         return "No selected file"
-
     # Check if the file upload was successful
     if not util.upload_file(file):
-        messenge = "upload fail"
+        messenge = "upload to local fail"
         status = FAIL_MESSENGER
+    elif "state" in request.form and request.form["state"] == "upload_to_drive":
+        if not util.upload_to_google_drive(file):
+            messenge = "upload to google drive fail"
+            status = FAIL_MESSENGER
     response = {
         "status": status,
         "message": messenge,
         "view": "home.html"
     }
     return handle_before_response(response,text=messenge)
+
+@bp_upload.route("/upload_to_drive", methods =["GET"])
+def upload_to_drive():
+    response = {
+        "status": SUCCESS_MESSENGER,
+        "message": "Upload a file",
+        "view": "upload.html"
+    }
+    return handle_before_response(response, state="upload_to_drive")
