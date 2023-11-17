@@ -1,4 +1,7 @@
-Flask==3.0.0
-PyJWT==2.8.0
-python-dotenv==1.0.0
-pytest==7.4.2
+Flask
+PyJWT
+python-dotenv
+pytest
+requests
+pydrive
+google-auth-oauthlib

@@ -16,3 +16,50 @@ footer{
 .header p#text, .footer p#text {
     text-align: center;
 }
+
+#container-text-three-js canvas{
+    max-width: 100%;
+}
+
+body {
+    background: #000
+}
+
+#main_upload{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #1ed0f0, #feb47b);
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+}
+
+.upload-container {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    padding-top: 10px;
+}
+
+.upload-container h2{
+    text-align: center;
+}
+
+
+.upload-form input{
+    width: 100%;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.upload-form label{
+    font-weight: bold;
+}
+
+
+
+
+

@@ -14,3 +14,7 @@
 body {
     background-color: #000;
 }
+
+#container-text-three-js canvas{
+    max-width: 100%;
+}

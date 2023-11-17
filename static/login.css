@@ -1,12 +1,14 @@
 /* static/style.css */
-body {
+main {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(to right, #1ed0f0, #feb47b);
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    max-height: 1080px;
+    height: 650px;
     margin: 0;
+    padding: 50px;
 }
 
 .login-container {
@@ -52,4 +54,8 @@ body {
     .login-container {
         width: 90%;
     }
+}
+
+body {
+    background: #000
 }

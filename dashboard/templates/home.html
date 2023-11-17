@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}HOME{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/three@0.138.3/examples/js/controls/OrbitControls.js"></script>
+{% endblock %}
+{% block header%}
+    {% include "header.html" %}
+{% endblock %}
+{% block body %}
+<div id="container-text-three-js"></div>
+<script>
+    var userName = "{{text | default('HOME') }}";
+</script>
+<script src="{{ url_for('static', filename='text_three.js') }}"></script>
+{% endblock %}
+{% block footer%}
+    {% include "footer.html" %}
+{% endblock %}
