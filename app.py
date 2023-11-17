@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 from dashboard.routes import bp_dashboard
 from upload_demo.routes import bp_upload
+from simplechat.routes import bp_simplechat
 
 def cdn_url_builder(_error, endpoint, values):
     if endpoint != "cdn":
@@ -29,6 +30,7 @@ def create_app():
 
     app.register_blueprint(bp_dashboard)
     app.register_blueprint(bp_upload, url_prefix="/upload")
+    app.register_blueprint(bp_simplechat, url_prefix="/chat")
     return app
 
 if __name__ == '__main__':
