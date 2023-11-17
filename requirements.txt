@@ -5,3 +5,4 @@ pytest
 requests
 pydrive
 google-auth-oauthlib
+Flask-SocketIO
