@@ -14,7 +14,7 @@ def get_simple_chat():
         "ip_address": ip_address,
         "view": "home.html"
     }
-    return handle_before_response(response)
+    return handle_before_response(response,text=response["message"])
 def handle_before_response(data, **context: t.Any):
     SUPPORT_FRONT_END = app.config["SUPPORT_FRONT_END"]
     if SUPPORT_FRONT_END and 'view' in data:
