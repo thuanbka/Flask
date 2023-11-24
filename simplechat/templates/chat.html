@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Chat simple{% endblock %}
+{% block head %}
+<script type="text/javascript" src="//cdn.socket.io/4.4.1/socket.io.min.js"></script>
+{% endblock %}
+{% block header%}
+{% include "header.html" %}
+{% endblock %}
+{% block body %}
+<div class="chat-container">
+    <div>
+        <ul id="messages"></ul>
+        <label>Please chat:</label>
+        <input id="message_input" autocomplete="off" />
+        <button id="send">Send</button>
+    </div>
+    <div>
+        <a href="#" id="leave_room">Leave this room</a>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='chat.js') }}"></script>
+{% endblock %}
+{% block footer%}
+{% include "footer.html" %}
+{% endblock %}

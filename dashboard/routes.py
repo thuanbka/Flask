@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, render_template, redirect, url_for
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, session
 import jwt
 from datetime import datetime, timedelta
 from entity.user import User
@@ -197,6 +197,8 @@ cleanup_thread = Thread(target=clean_expired_tokens)
 def handle_before_response(data, **context: t.Any):
     SUPPORT_FRONT_END = app.config["SUPPORT_FRONT_END"]
     if SUPPORT_FRONT_END and 'view' in data:
+        if "token" in data:
+            session["token"] = data["token"]
         return render_template(data['view'], **context)
     else:
         if 'view' in data:
