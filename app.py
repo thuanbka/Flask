@@ -1,6 +1,6 @@
 
 from flask import Flask
-from __init__ import create_app, socketio
+from app import create_app, socketio
 
 # server = Flask(__name__)
 # server.wsgi_app = create_app()

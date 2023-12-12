@@ -8,6 +8,7 @@ import time
 from threading import Thread, Event
 import typing as t
 from flask import current_app as app
+from app import db
 
 bp_dashboard = Blueprint("dashboard", __name__, template_folder="templates")
 SUCCESS_MESSENGER = "sucsess"
@@ -70,15 +71,23 @@ def get_login():
     }
     return handle_before_response(response)
 
-def checkdatabase(user):
-    with open("data.json", 'r') as file:
-        list_user = json.load(file)
-        matching_users = list(filter(lambda item: item['username'] == user.getUsername() and item['password'] == user.getPassword(), list_user))
-        # Check if there's at least one matching user
-        if len(matching_users) >= 1:
-            user = User(**matching_users[0])
-            return user
-        return None
+def checkdatabase(data):
+    # with open("data.json", 'r') as file:
+    #     list_user = json.load(file)
+    #     matching_users = list(filter(lambda item: item['username'] == user.getUsername() and item['password'] == user.getPassword(), list_user))
+    #     # Check if there's at least one matching user
+    #     if len(matching_users) >= 1:
+    #         user = User(**matching_users[0])
+    #         return user
+    #     return None
+    user = (
+        db.session.query(User)
+        .filter(User.username == data.get("username"))
+        .filter(User.password == util.sha256_encode(data.get("password")))
+        .with_for_update(of=User)
+        .first()
+    )
+    return user
     
 # Route for token generation
 @bp_dashboard.route('/login', methods=['POST'])
@@ -94,11 +103,8 @@ def login():
 
         if not data or 'username' not in data or 'password' not in data:
             return handle_before_response({'error': 'Invalid data'}), 401
-        else:
-            password = util.sha256_encode(data.get('password'))
-            username = data.get('username')
-            user = User(username=username, password=password)
-            user = checkdatabase(user)
+        else: 
+            user = checkdatabase(data)
             if user != None:
                 # In a real application, validate the username and password against a database
                 # For simplicity, let's assume any username/password combination is valid
