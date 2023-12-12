@@ -17,7 +17,7 @@
       {
         return length(p)-s;
       }
-      
+
       mat3 rotationMatrix(vec3 m,float a) {
           m = normalize(m);
           float c = cos(a),s=sin(a);
@@ -26,7 +26,6 @@
             (1.-c)*m.x*m.y+s*m.z, c+(1.-c)*m.y*m.y,     (1.-c)*m.y*m.z-s*m.x,
             (1.-c)*m.x*m.z-s*m.y, (1.-c)*m.y*m.z+s*m.x, c+(1.-c)*m.z*m.z);
       }
-      
       mat3 rotate(vec3 val){
         mat3 matX = rotationMatrix(vec3(1, 0, 0), val.x);
         mat3 matY = rotationMatrix(vec3(0, 1, 0), val.y);

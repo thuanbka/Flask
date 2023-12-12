@@ -6,3 +6,6 @@ requests
 pydrive
 google-auth-oauthlib
 Flask-SocketIO
+psycopg2-binary
+SQLAlchemy
+Flask-SQLAlchemy

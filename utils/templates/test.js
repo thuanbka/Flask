@@ -99,7 +99,7 @@ let points = new THREE.Points(
         float heart = sdSphere(h, r);        
         bool boolDiscard = heart > 0.0 || heart < -2.;
         vec3 c = vec3(1., 0.75, 0.9); // colour of the heart
-        if (heart > -0.125) c = vec3(1);
+        // if (heart > -0.125) c = vec3(1);
         vC = c;
         // float logoPos = sin(time) * 47.5;
         // if(position.z > logoPos - 2.5 && position.z < logoPos + 2.5){
