@@ -1,11 +1,14 @@
-from utils import util
-from flask import Flask, request, session
+import utils.util as util
+from flask import Flask
 import posixpath
 from dotenv import load_dotenv
 import os
 from flask_socketio import SocketIO
+from flask_sqlalchemy import SQLAlchemy
+from utils.dbutils import drop_db, init_db
 
 socketio = SocketIO()
+db: SQLAlchemy = SQLAlchemy()
 
 def cdn_url_builder(_error, endpoint, values):
     if endpoint != "cdn":
@@ -20,7 +23,7 @@ def create_app():
         print("License not match")
         return None
     app = Flask(__name__)
-    app.config.from_pyfile('config.py')
+    app.config.from_pyfile('../config.py')
     app.url_build_error_handlers.append(cdn_url_builder)
     # Load environment variables from .env file during testing
     if app.config['TESTING']:
@@ -35,9 +38,17 @@ def create_app():
     app.register_blueprint(bp_upload, url_prefix="/upload")
     app.register_blueprint(bp_simplechat, url_prefix="/chat")
     socketio.init_app(app)
+    db.init_app(app)
 
     # @app.before_request
     # def before_request_func() -> None:
     #     if app.config["SUPPORT_FRONT_END"]:
     #         request.headers['Authorization'] = session.get('token', '')
+    @app.cli.command("initdb")
+    def initdb_command() -> None:
+        init_db(db)
+
+    @app.cli.command("dropdb")
+    def dropdb_command() -> None:
+        drop_db(db)
     return app
