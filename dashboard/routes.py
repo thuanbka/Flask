@@ -8,6 +8,7 @@ import time
 from threading import Thread, Event
 import typing as t
 from flask import current_app as app
+from app import db
 
 bp_dashboard = Blueprint("dashboard", __name__, template_folder="templates")
 SUCCESS_MESSENGER = "sucsess"
@@ -70,15 +71,23 @@ def get_login():
     }
     return handle_before_response(response)
 
-def checkdatabase(user):
-    with open("data.json", 'r') as file:
-        list_user = json.load(file)
-        matching_users = list(filter(lambda item: item['username'] == user.getUsername() and item['password'] == user.getPassword(), list_user))
-        # Check if there's at least one matching user
-        if len(matching_users) >= 1:
-            user = User(**matching_users[0])
-            return user
-        return None
+def checkdatabase(data):
+    # with open("data.json", 'r') as file:
+    #     list_user = json.load(file)
+    #     matching_users = list(filter(lambda item: item['username'] == user.getUsername() and item['password'] == user.getPassword(), list_user))
+    #     # Check if there's at least one matching user
+    #     if len(matching_users) >= 1:
+    #         user = User(**matching_users[0])
+    #         return user
+    #     return None
+    user = (
+        db.session.query(User)
+        .filter(User.username == data.get("username"))
+        .filter(User.password == util.sha256_encode(data.get("password")))
+        .with_for_update(of=User)
+        .first()
+    )
+    return user
     
 # Route for token generation
 @bp_dashboard.route('/login', methods=['POST'])
@@ -94,11 +103,8 @@ def login():
 
         if not data or 'username' not in data or 'password' not in data:
             return handle_before_response({'error': 'Invalid data'}), 401
-        else:
-            password = util.sha256_encode(data.get('password'))
-            username = data.get('username')
-            user = User(username=username, password=password)
-            user = checkdatabase(user)
+        else: 
+            user = checkdatabase(data)
             if user != None:
                 # In a real application, validate the username and password against a database
                 # For simplicity, let's assume any username/password combination is valid
@@ -118,6 +124,124 @@ def login():
     except Exception as ex:
         print("Error: %s"%(str(ex)))
         return handle_before_response({'error': 'Have error from server'}), 500
+
+@bp_dashboard.route('/signin', methods=["POST"])
+def sign_in():
+    try:
+        SUPPORT_FRONT_END = app.config["SUPPORT_FRONT_END"]
+        if request.form:
+            data = request.form
+        elif request.is_json:
+            data = request.get_json()
+        else:
+            return handle_before_response({'error': 'Invalid data format'}), 400
+        if not data or 'username' not in data or 'password' not in data:
+                return handle_before_response({'error': 'Invalid data'}), 401
+        else:
+            user = (
+                db.session.query(User)
+                .filter(User.username == data.get("username"))
+                .with_for_update(of=User)
+                .first()
+            )
+            if user:
+                return handle_before_response({'error': 'User has exist!!'}), 401
+            else:
+                db.session.add(
+                    User(
+                        username = data.get("username"),
+                        password = util.sha256_encode(data.get("password")),
+                        role = "user"
+                    )
+                )
+                db.session.commit()
+                user = checkdatabase(data)
+                token = generate_token(user)
+                response = {
+                    "token": token,
+                    "status": SUCCESS_MESSENGER,
+                    "message": "Success sign in with %s and role %s"%(user.getUsername(), user.getRole()),
+                    "user_name": user.username
+                }
+                if SUPPORT_FRONT_END:
+                    return redirect(url_for('dashboard.welcome', response = json.dumps(response)))
+                else:
+                    return handle_before_response(response)
+    except Exception as ex:
+        print("Error: %s"%(str(ex)))
+        return handle_before_response({'error': 'Have error from server'}), 500
+
+@bp_dashboard.route('/admin/remove_user', methods=["POST"])
+def remove_user():
+    try:
+        token = request.headers.get('Authorization')
+        if not token:
+            return handle_before_response({'error': 'Token is missing'}), 401
+        verification_result = verify_token(token)
+        if 'username' in verification_result and 'role' in verification_result and verification_result['role'] == 'admin':
+            if request.form:
+                data = request.form
+            elif request.is_json:
+                data = request.get_json()
+            else:
+                return handle_before_response({'error': 'Invalid data format'}), 400
+            if not data or 'username' not in data:
+                return handle_before_response({'error': 'Invalid data'}), 401
+            else:
+                user = (
+                    db.session.query(User)
+                    .filter(User.username == data.get("username"))
+                    .with_for_update(of=User)
+                    .first()
+                )
+                if user:
+                    db.session.delete(user)
+                    db.session.commit()
+                    return handle_before_response({'message': f'Remove user: {user.username} success!'})
+                else:
+                   return handle_before_response({'error': 'User not exist!!'}), 401
+        else:
+            return handle_before_response({'error': 'You use wrong token with admin'}), 401
+    except Exception as ex:
+        print("Error: %s"%(str(ex)))
+        return handle_before_response({'error': 'Have something wrong from server'}), 500
+
+
+
+@bp_dashboard.route('/admin/change_role', methods=["POST"])
+def change_role():
+    try:
+        token = request.headers.get('Authorization')
+        if not token:
+            return handle_before_response({'error': 'Token is missing'}), 401
+        verification_result = verify_token(token)
+        if 'username' in verification_result and 'role' in verification_result and verification_result['role'] == 'admin':
+            if request.form:
+                data = request.form
+            elif request.is_json:
+                data = request.get_json()
+            if not data or 'username' not in data or "role" not in data:
+                return handle_before_response({'error': 'Invalid data'}), 401
+            else:
+                user = (
+                    db.session.query(User)
+                    .filter(User.username == data.get("username"))
+                    .with_for_update(of=User)
+                    .first()
+                )
+                if user:
+                    role = data.get("role")
+                    user.role = role
+                    db.session.commit()
+                    return handle_before_response({'message': f'Change role for user: {user.username} to {user.role} success!'})
+                else:
+                    return handle_before_response({'error': 'User do not exist!!'}), 401
+        else:
+            return handle_before_response({'error': 'You use wrong token with admin'}), 401
+
+    except Exception as ex:
+        print("Error: %s"%(str(ex)))
+        return handle_before_response({'error': 'Have something wrong from server'}), 500
 
 # Router for welcome resource
 @bp_dashboard.route('/welcome', methods=["GET"])
