@@ -1,9 +1,9 @@
 # Use the latest Ubuntu
-FROM ubuntu:latest
+FROM flask_app:latest
 
 # Update the apt-get list and install necessary packages
 RUN apt-get update -y && \
-    apt-get install -y python3 python3-pip
+    apt-get install -y python3 python3-pip postgresql-client
 
 # Set the working directory
 WORKDIR /flask_app

@@ -9,3 +9,4 @@ Flask-SocketIO
 psycopg2-binary
 SQLAlchemy
 Flask-SQLAlchemy
+Werkzeug == 2.2.2
