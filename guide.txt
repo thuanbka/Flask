@@ -1,0 +1,8 @@
+# Run docker with mount:
+docker run -dp 127.0.0.1:8080:8080 --mount type=bind,src="$(pwd)",target=/flask_app flask_app
+# Run docker:
+docker run -dp 127.0.0.1:8080:8080 flask_app
+# Open shell container
+docker exec -it <container-name-or-id> <shell-executable>
+# build docker
+docker build -t flask_app .
