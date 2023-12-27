@@ -1,0 +1,21 @@
+# Use the latest Ubuntu
+FROM ubuntu:latest
+
+# Update the apt-get list and install necessary packages
+RUN apt-get update -y && \
+    apt-get install -y python3 python3-pip postgresql-client
+
+# Set the working directory
+WORKDIR /flask_app
+
+# Copy the project files
+COPY . /flask_app
+
+# Install Python dependencies
+RUN pip3 install --no-cache-dir -r requirements_product.txt
+
+# Expose port 80 for Gunicorn
+EXPOSE 80
+
+# Command to run Gunicorn
+CMD ["gunicorn", "-k", "gevent", "-w", "1", "--bind", "0.0.0.0:80", "app:create_app()"]
