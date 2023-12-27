@@ -3,7 +3,7 @@ FROM ubuntu:latest
 
 # Update the apt-get list and install necessary packages
 RUN apt-get update -y && \
-    apt-get install -y python3 python3-pip postgresql-client nano iproute2
+    apt-get install -y python3 python3-pip
 
 # Set the working directory
 WORKDIR /flask_app
@@ -15,7 +15,7 @@ COPY . /flask_app
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Expose the port
-EXPOSE 80
+EXPOSE 8080
 
 # Command to run the application
 CMD ["python3", "app.py"]
