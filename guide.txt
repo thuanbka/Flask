@@ -6,3 +6,4 @@ docker run -dp 127.0.0.1:8080:8080 flask_app
 docker exec -it <container-name-or-id> <shell-executable>
 # build docker
 docker build -t flask_app .
+docker build -t flask_app_test -f Dockerfile.test .
