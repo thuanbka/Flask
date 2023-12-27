@@ -1,7 +1,7 @@
 from typing import Any
 
 def init_db(db:Any)->None:
-    from models.user import User
+    from entity.user import User
     db.metadata.create_all(bind=db.engine)
     
     print("Init Database:")
@@ -26,4 +26,7 @@ def init_db(db:Any)->None:
 def drop_db(db:Any)->None:
     print("Drop Database:")
     print(db)
-    db.metadata.drop_all(bind=db.engine)
+    try:
+        db.metadata.drop_all(bind=db.engine)
+    except Exception as e:
+        print(f"Error dropping tables: {e}")
