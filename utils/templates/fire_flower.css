@@ -8,3 +8,15 @@ canvas {
 	cursor: crosshair;
 	display: block;
 }
+
+.control-music{
+	z-index: 10;
+	margin-top: 5px;
+}
+
+.control-music button{
+	font-size: 20px;
+	padding: 5px;
+	border-radius: 5px;
+	background-color: #10b6d3;
+}

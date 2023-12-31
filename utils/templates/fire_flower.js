@@ -3,7 +3,7 @@ window.requestAnimFrame = (function () {
         window.webkitRequestAnimationFrame ||
         window.mozRequestAnimationFrame ||
         function (callback) {
-            window.setTimeout(callback,1000);
+            window.setTimeout(callback, 1000);
         };
 })();
 
@@ -162,4 +162,14 @@ function loop() {
 }
 
 window.onload = loop;
+
+var x = document.getElementById("music");
+function playAudio() {
+    x.play();
+    x.loop = true;
+}
+
+function pauseAudio() {
+    x.pause();
+}
 
