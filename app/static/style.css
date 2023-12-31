@@ -1,4 +1,4 @@
-#container-text-three-js{
+/* #container-text-three-js{
     width: 100%;
     height: 100%;
 }
@@ -23,9 +23,9 @@ footer{
 
 body {
     background: #000
-}
+} */
 
-.main {
+/* .main {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(to right, #1ed0f0, #feb47b);
     display: flex;
@@ -41,7 +41,7 @@ body {
     margin: 0;
     padding: 20px;
     display: flex;
-}
+} */
 
 .upload-container {
     background-color: #fff;

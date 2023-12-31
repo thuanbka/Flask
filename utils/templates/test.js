@@ -5,7 +5,7 @@ camera.position.set(0, 10, 100).setLength(100);
 var renderer = new THREE.WebGLRenderer({
   antialias: true,
 });
-renderer.setClearColor(0x888586);
+renderer.setClearColor(0x222);
 renderer.setPixelRatio(0.5);
 var canvas = renderer.domElement;
 document.body.appendChild(canvas);
@@ -98,7 +98,7 @@ let points = new THREE.Points(
         float r = 15. + 3. * pow(0.5 + 0.5 * sin(2. * PI * time + h.y / 25.), 4.);
         float heart = sdSphere(h, r);        
         bool boolDiscard = heart > 0.0 || heart < -2.;
-        vec3 c = vec3(1., 0.75, 0.9); // colour of the heart
+        vec3 c = vec3(1., 0.5, 0.5); // colour of the heart
         // if (heart > -0.125) c = vec3(1);
         vC = c;
         // float logoPos = sin(time) * 47.5;
@@ -157,8 +157,8 @@ function addText(fontSize, position) {
       const text = new THREE.Mesh(
         textGeometry,
         new THREE.MeshPhongMaterial({
-          color: "#cceeee",
-          emissive: "#00005f",
+          color: "808080",
+          emissive: "#000000",
           specular: "#0000ff",
           shininess: 0,
         })

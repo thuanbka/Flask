@@ -295,7 +295,7 @@ def check_login_as_admin():
 @bp_dashboard.route('/logout', methods=['POST'])
 def user_logout():
     token = request.headers.get('Authorization')
-    
+
     if not token:
         return handle_before_response({'error': 'Token is missing'}), 400
 
@@ -304,7 +304,6 @@ def user_logout():
 # Event to signal the thread to exit
 exit_event = Event()
 
-# Function to periodically clean up expired tokens
 def clean_expired_tokens():
     while not exit_event.is_set():
         print("Running remove auto token black list.....")
