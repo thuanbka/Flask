@@ -34,11 +34,13 @@ def create_app():
     from upload_demo.routes import bp_upload
     from simplechat import bp_simplechat
     from downloads.routes import bp_download
+    from templates_demo.routers import bp_template_demo
 
     app.register_blueprint(bp_dashboard)
     app.register_blueprint(bp_upload, url_prefix="/upload")
     app.register_blueprint(bp_simplechat, url_prefix="/chat")
     app.register_blueprint(bp_download, url_prefix="/download")
+    app.register_blueprint(bp_template_demo, url_prefix="/templates")
     socketio.init_app(app)
     db.init_app(app)
 
