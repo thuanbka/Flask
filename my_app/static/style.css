@@ -3,6 +3,11 @@
     height: 100%;
 }
 
+#icon-home
+{
+    max-width: 50px;
+}
+
 header{
     padding: 10px;
     background-color: antiquewhite;

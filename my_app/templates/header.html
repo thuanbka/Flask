@@ -1,5 +1,8 @@
 <header class="header">
     <p id="text">This is block header!</p>
+    <div class="icon-home">
+        <a href="/"><img src="{{ url_for('static', filename='images/home_icon.png') }}" id="icon-home" /></a>
+    </div>
     <a href="{{ url_for('dashboard.get_login') }}">
         <button type="button" id="button-login">Login!</button>
     </a>
