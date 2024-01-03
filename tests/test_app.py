@@ -1,7 +1,7 @@
 # test_app.py
 import unittest
 import json
-from app import create_app
+from my_app import create_app
 
 class FlaskTest(unittest.TestCase):
 

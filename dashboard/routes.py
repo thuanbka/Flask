@@ -8,7 +8,7 @@ import time
 from threading import Thread, Event
 import typing as t
 from flask import current_app as app
-from app import db
+from my_app import db
 
 bp_dashboard = Blueprint("dashboard", __name__, template_folder="templates")
 SUCCESS_MESSENGER = "sucsess"

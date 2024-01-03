@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Download{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% endblock %}
+{% block header%}
+{% include "header.html" %}
+{% endblock %}
+{% block main_id %}main_upload{% endblock %}
+{% block body %}
+<div class="upload-container">
+    <h2>Download demo</h2>
+    <form class="download-form" action="{{url_for('download.download_file')}}" method="post" enctype="multipart/form-data">
+        <button type="submit">Download</button>
+    </form>
+</div>
+{% endblock %}
+{% block footer%}
+{% include "footer.html" %}
+{% endblock %}
