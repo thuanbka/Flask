@@ -1,4 +1,5 @@
-var url_home = 'http://' + document.domain + ':' + location.port
+var url_home = 'https://' + document.domain;
+// var url_home = 'https://' + document.domain + ':' + location.port
 var socket = io.connect(url_home + "/chat/simple");
 
 socket.on('connect', function() {
