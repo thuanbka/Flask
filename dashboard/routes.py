@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, render_template, redirect, url_fo
 import jwt
 from datetime import datetime, timedelta
 from entity.user import User
+from entity.word_toeic import WordToeic
 import json
 from utils import util
 import time
@@ -13,10 +14,12 @@ from my_app import db
 bp_dashboard = Blueprint("dashboard", __name__, template_folder="templates")
 SUCCESS_MESSENGER = "sucsess"
 EXPIRED_TIME = 3600
-#token black list
+# token black list
 token_blacklist = set()
 
 # Function to generate a JWT token
+
+
 def generate_token(user):
     payload = {
         'username': user.getUsername(),
@@ -28,13 +31,16 @@ def generate_token(user):
     return token
 
 # Function to verify a JWT token
+
+
 def verify_token(token):
     try:
         # Check if the token is in the blacklist
         if token in token_blacklist:
             raise jwt.InvalidTokenError('Token has been blacklisted')
 
-        decoded_payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        decoded_payload = jwt.decode(
+            token, app.config['SECRET_KEY'], algorithms=['HS256'])
         return decoded_payload
     except jwt.ExpiredSignatureError:
         return 'Token has expired'
@@ -43,6 +49,8 @@ def verify_token(token):
         return f'Invalid token: {str(e)}'
 
 # Function to logout (add token to the blacklist)
+
+
 def logout(token):
     verification_result = verify_token(token)
     if 'username' in verification_result:
@@ -53,7 +61,8 @@ def logout(token):
     else:
         return handle_before_response({'error': verification_result}), 401
 
-@bp_dashboard.route("/",methods=['GET'])
+
+@bp_dashboard.route("/", methods=['GET'])
 def home():
     response = {
         "status": SUCCESS_MESSENGER,
@@ -62,7 +71,8 @@ def home():
     }
     return handle_before_response(response)
 
-@bp_dashboard.route("/login",methods=['GET'])
+
+@bp_dashboard.route("/login", methods=['GET'])
 def get_login():
     response = {
         "status": SUCCESS_MESSENGER,
@@ -70,6 +80,7 @@ def get_login():
         "view": "login.html"
     }
     return handle_before_response(response)
+
 
 def checkdatabase(data):
     # with open("data.json", 'r') as file:
@@ -88,8 +99,10 @@ def checkdatabase(data):
         .first()
     )
     return user
-    
+
 # Route for token generation
+
+
 @bp_dashboard.route('/login', methods=['POST'])
 def login():
     try:
@@ -103,7 +116,7 @@ def login():
 
         if not data or 'username' not in data or 'password' not in data:
             return handle_before_response({'error': 'Invalid data'}), 401
-        else: 
+        else:
             user = checkdatabase(data)
             if user != None:
                 # In a real application, validate the username and password against a database
@@ -112,18 +125,19 @@ def login():
                 response = {
                     "token": token,
                     "status": SUCCESS_MESSENGER,
-                    "message": "Success login with %s and role %s"%(user.getUsername(), user.getRole()),
+                    "message": "Success login with %s and role %s" % (user.getUsername(), user.getRole()),
                     "user_name": user.username
                 }
                 if SUPPORT_FRONT_END:
-                    return redirect(url_for('dashboard.welcome', response = json.dumps(response)))
+                    return redirect(url_for('dashboard.welcome', response=json.dumps(response)))
                 else:
                     return handle_before_response(response)
             else:
                 return handle_before_response({'error': 'Invalid credentials/Wrong username:password'}), 401
     except Exception as ex:
-        print("Error: %s"%(str(ex)))
+        print("Error: %s" % (str(ex)))
         return handle_before_response({'error': 'Have error from server'}), 500
+
 
 @bp_dashboard.route('/signin', methods=["POST"])
 def sign_in():
@@ -136,7 +150,7 @@ def sign_in():
         else:
             return handle_before_response({'error': 'Invalid data format'}), 400
         if not data or 'username' not in data or 'password' not in data:
-                return handle_before_response({'error': 'Invalid data'}), 401
+            return handle_before_response({'error': 'Invalid data'}), 401
         else:
             user = (
                 db.session.query(User)
@@ -149,9 +163,9 @@ def sign_in():
             else:
                 db.session.add(
                     User(
-                        username = data.get("username"),
-                        password = util.sha256_encode(data.get("password")),
-                        role = "user"
+                        username=data.get("username"),
+                        password=util.sha256_encode(data.get("password")),
+                        role="user"
                     )
                 )
                 db.session.commit()
@@ -160,16 +174,17 @@ def sign_in():
                 response = {
                     "token": token,
                     "status": SUCCESS_MESSENGER,
-                    "message": "Success sign in with %s and role %s"%(user.getUsername(), user.getRole()),
+                    "message": "Success sign in with %s and role %s" % (user.getUsername(), user.getRole()),
                     "user_name": user.username
                 }
                 if SUPPORT_FRONT_END:
-                    return redirect(url_for('dashboard.welcome', response = json.dumps(response)))
+                    return redirect(url_for('dashboard.welcome', response=json.dumps(response)))
                 else:
                     return handle_before_response(response)
     except Exception as ex:
-        print("Error: %s"%(str(ex)))
+        print("Error: %s" % (str(ex)))
         return handle_before_response({'error': 'Have error from server'}), 500
+
 
 @bp_dashboard.route('/admin/remove_user', methods=["POST"])
 def remove_user():
@@ -199,13 +214,12 @@ def remove_user():
                     db.session.commit()
                     return handle_before_response({'message': f'Remove user: {user.username} success!'})
                 else:
-                   return handle_before_response({'error': 'User not exist!!'}), 401
+                    return handle_before_response({'error': 'User not exist!!'}), 401
         else:
             return handle_before_response({'error': 'You use wrong token with admin'}), 401
     except Exception as ex:
-        print("Error: %s"%(str(ex)))
+        print("Error: %s" % (str(ex)))
         return handle_before_response({'error': 'Have something wrong from server'}), 500
-
 
 
 @bp_dashboard.route('/admin/change_role', methods=["POST"])
@@ -240,10 +254,12 @@ def change_role():
             return handle_before_response({'error': 'You use wrong token with admin'}), 401
 
     except Exception as ex:
-        print("Error: %s"%(str(ex)))
+        print("Error: %s" % (str(ex)))
         return handle_before_response({'error': 'Have something wrong from server'}), 500
 
 # Router for welcome resource
+
+
 @bp_dashboard.route('/welcome', methods=["GET"])
 def welcome():
     response = {
@@ -259,9 +275,17 @@ def welcome():
     else:
         user.setUsername("Noname_user")
     response["view"] = "welcome.html"
-    return handle_before_response(response,user=user)
+    test_word()
+    return handle_before_response(response, user=user)
 
+
+def test_word():
+    list_word = db.session.query(WordToeic).all()
+    for word in list_word:
+        print(word)
 # Route for protected resource
+
+
 @bp_dashboard.route('/protected', methods=['POST'])
 def protected():
     token = request.headers.get('Authorization')
@@ -275,6 +299,8 @@ def protected():
         return handle_before_response({'error': verification_result}), 401
 
 # Route for admin resource
+
+
 @bp_dashboard.route('/admin', methods=['POST'])
 def check_login_as_admin():
     try:
@@ -288,10 +314,12 @@ def check_login_as_admin():
         else:
             return handle_before_response({'error': 'You use wrong token with admin'}), 401
     except Exception as ex:
-        print("Error: %s"%(str(ex)))
+        print("Error: %s" % (str(ex)))
         return handle_before_response({'error': 'Have something wrong from server'}), 500
 
 # Route for logout (blacklisting token)
+
+
 @bp_dashboard.route('/logout', methods=['POST'])
 def user_logout():
     token = request.headers.get('Authorization')
@@ -301,20 +329,24 @@ def user_logout():
 
     return logout(token)
 
+
 # Event to signal the thread to exit
 exit_event = Event()
+
 
 def clean_expired_tokens():
     while not exit_event.is_set():
         print("Running remove auto token black list.....")
         time.sleep(EXPIRED_TIME)  # Sleep for EXPIRED_TIME seconds
-        expired_tokens = {token for token in token_blacklist if 'exp' not in verify_token(token)}
+        expired_tokens = {
+            token for token in token_blacklist if 'exp' not in verify_token(token)}
         token_blacklist.difference_update(expired_tokens)
-        print("Remove: %s"%(str(expired_tokens)))
+        print("Remove: %s" % (str(expired_tokens)))
+
 
 # Start the clean-up thread
 cleanup_thread = Thread(target=clean_expired_tokens)
-#cleanup_thread.start()
+# cleanup_thread.start()
 
 
 def handle_before_response(data, **context: t.Any):
@@ -327,7 +359,7 @@ def handle_before_response(data, **context: t.Any):
         if 'view' in data:
             del data["view"]
         return jsonify(data)
-    
+
 # Wait for the thread to finish before exiting the application
 # exit_event.set()
 # cleanup_thread.join()

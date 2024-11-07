@@ -3,3 +3,4 @@
 uploads/*
 *virtualenv*
 .vscode
+*virtual*
