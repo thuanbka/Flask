@@ -22,6 +22,7 @@ def generate_random(len_question, number_sets):
             count = 0
             list_set_question.append(list_tmp)
             list_tmp = []
+    list_set_question.append(arr)
     return list_set_question
 
 

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='question_toeic.css') }}">
+    <title>Welcome {{user.username}}</title>
+</head>
+
+<body>
+    <div class="test_question" id="list-test-question">
+        <h1> We have {{number_question}} sets</h1>
+    </div>
+    <script>
+        var user_name = {{ user.username| tojson }};
+        var list_set_questions = {{ list_set_questions| tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='test_question.js') }}"></script>
+</body>
+
+</html>

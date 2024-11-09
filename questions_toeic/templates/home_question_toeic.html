@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}HOME{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='question_toeic.css') }}">
+{% endblock %}
+{% block header%}
+{% include "header.html" %}
+{% endblock %}
+{% block body %}
+<div class="home-question-toeic">
+    <h1>Please choose a option:</h1>
+    <ul class="list-option-test">
+        <li><a href="/question_toeic/generate_question_user">Generate Question</a></li>
+        <li><a href="/question_toeic/get_test_question">Get Test</a></li>
+    </ul>
+</div>
+{% endblock %}
+{% block footer%}
+{% include "footer.html" %}
+{% endblock %}

@@ -1,0 +1,35 @@
+.home-question-toeic{
+    text-align: center;
+}
+
+.list-option-test{
+    font-size: 25px;
+    text-align: left;
+}
+
+.list-option-test:hover{
+   color: #ff5533;
+}
+
+.test_question{
+    text-align: center;
+}
+
+#list-test-question{
+    text-align: center;
+    width: 80%;
+    margin: 0 auto;
+}
+
+#list-test-question button{
+    margin: 10px;
+    border-radius: 10px;
+    padding: 10px;
+    width: 15%;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+#list-test-question button:hover{
+    background-color: #0fc2c9 !important;
+}

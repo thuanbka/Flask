@@ -47,10 +47,10 @@ class SetQuestion(db.Model):
         return self.result
 
     def set_result_status(self, value):
-        if isinstance(value, ResultStatus):
-            self.result = value
-        else:
-            raise ValueError("Invalid result status")
+        try:
+            self.result = ResultStatus[value]
+        except KeyError:
+            raise ValueError(f"Invalid result status: {value}")
 
     # Getter and Setter for user_id
     def get_user_id(self):
@@ -58,3 +58,12 @@ class SetQuestion(db.Model):
 
     def set_user_id(self, value):
         self.user_id = value
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name_set": self.name_set,
+            "list_question": self.list_question,
+            "result": self.result.value,
+            "user_id": self.user_id
+        }

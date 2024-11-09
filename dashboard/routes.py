@@ -10,7 +10,6 @@ from threading import Thread, Event
 import typing as t
 from flask import current_app as app
 from my_app import db
-from utils import handle_question_word
 
 bp_dashboard = Blueprint("dashboard", __name__, template_folder="templates")
 SUCCESS_MESSENGER = "sucsess"
@@ -81,45 +80,6 @@ def get_login():
         "view": "login.html"
     }
     return handle_before_response(response)
-
-
-@bp_dashboard.route("/generate_question_user", methods=["GET"])
-def get_generate_question_user():
-    response = {
-        "status": SUCCESS_MESSENGER,
-        "message": "Please login!!",
-        "view": "generate_question_user.html"
-    }
-    return handle_before_response(response)
-
-
-@bp_dashboard.route('/generate_question_user', methods=['POST'])
-def set_generate_question_user():
-    try:
-        SUPPORT_FRONT_END = app.config["SUPPORT_FRONT_END"]
-        if request.form:
-            data = request.form
-        elif request.is_json:
-            data = request.get_json()
-        else:
-            return handle_before_response({'error': 'Invalid data format'}), 400
-
-        if not data or 'username' not in data:
-            return handle_before_response({'error': 'Invalid data'}), 401
-        else:
-            list_word = db.session.query(WordToeic).all()
-            result_generate = handle_question_word.create_data_question_user(
-                db=db, user_name=data["username"], len_questions=len(list_word), number_sets=30)
-            if result_generate:
-                if SUPPORT_FRONT_END:
-                    return handle_before_response({'message': 'Generate successful'})
-                else:
-                    return handle_before_response({'message': 'Generate successful'})
-            else:
-                return handle_before_response({'error': 'Generate question Failed'}), 405
-    except Exception as ex:
-        print("Error: %s" % (str(ex)))
-        return handle_before_response({'error': 'Have error from server'}), 500
 
 
 def checkdatabase(data):
