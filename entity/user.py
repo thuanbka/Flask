@@ -33,3 +33,9 @@ class User(db.Model):
 
     def setRole(self, role):
         self.role = role
+
+    def get(self):
+        return self.password
+
+    def setPassword(seld, password):
+        seld.password = password

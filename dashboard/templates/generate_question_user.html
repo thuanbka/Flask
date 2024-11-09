@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Generate question user{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/three@0.138.3/examples/js/controls/OrbitControls.js"></script>
+{% endblock %}
+{% block body %}
+<div class="login-container">
+    <h2>Generate question for user</h2>
+    <form class="login-form" action="/generate_question_user" method="post">
+        <input type="text" placeholder="Username" name="username" id="username" required>
+        <button type="submit">Generate_question</button>
+    </form>
+</div>
+<script src="{{ url_for('static', filename='login.js') }}"></script>
+{% endblock %}

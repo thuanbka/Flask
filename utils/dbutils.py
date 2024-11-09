@@ -45,8 +45,6 @@ def drop_db(db: Any) -> None:
 
 def initdb_word_toeic(db: Any) -> None:
     from entity.word_toeic import WordToeic
-    db.metadata.create_all(bind=db.engine)
-
     print("Init table word toeic:")
     print(db)
     list_word = []
