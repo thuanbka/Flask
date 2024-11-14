@@ -4,22 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='question_toeic.css') }}">
-    <title>Welcome {{user_name}}</title>
+    <title>Test Toeic</title>
 </head>
 
 <body>
     <div class="test_question">
-        <h1> This is test toeic for {{user_name}}</h1>
+        <h1> This is test toeic for <span id="user_name">{{user_name}}</span></h1>
         <div id="title-test-toeic"></div>
-        <div class="test-toeic"></div>
-        <button onclick="UpdateResult('FAILED')">CLick Fail</button>
-        <button onclick="UpdateResult('PASS')">CLick PASS</button>
-        <button onclick="UpdateResult('UNTESTED')">CLick to CLear</button>
+        <div class="test-toeic">
+            <div id="question_toeic"></div>
+            <div class="list_answer">
+                <button type="button" id="answer_a" class="answer_toeic">Answer A</button>
+                <button type="button" id="answer_b" class="answer_toeic">Answer B</button>
+                <button type="button" id="answer_c" class="answer_toeic">Answer C</button>
+                <button type="button" id="answer_d" class="answer_toeic">Answer D</button>
+            </div>
+        </div>
     </div>
     <script>
-        var user_name = {{ user_name| tojson }};
         var set_question_id = {{ set_question_id| tojson}}
-        var list_questions = {{ list_questions| tojson }};
     </script>
     <script src="{{ url_for('static', filename='test_question_toeic.js') }}"></script>
 </body>

@@ -78,3 +78,15 @@ class WordToeic(db.Model):
         return f"<WordToeic(id={self.id}, word={self.word}, transliteration={self.transliteration}, " \
                f"mean1={self.mean1}, mean2={self.mean2}, mean3={self.mean3}, " \
                f"mean4={self.mean4}, mean5={self.mean5})>"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "word": self.word,
+            "transliteration": self.transliteration,
+            "mean1": self.mean1,
+            "mean2": self.mean2,
+            "mean3": self.mean3,
+            "mean4": self.mean4,
+            "mean5": self.mean5,
+        }
