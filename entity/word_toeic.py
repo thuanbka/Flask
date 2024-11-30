@@ -34,7 +34,8 @@ class WordToeic(db.Model):
 
     # Getter and Setter for transliteration
     def get_transliteration(self):
-        return self.transliteration
+        transliteration = self.transliteration.replace("-", "\'")
+        return transliteration
 
     def set_transliteration(self, value):
         self.transliteration = value
@@ -83,7 +84,7 @@ class WordToeic(db.Model):
         return {
             "id": self.id,
             "word": self.word,
-            "transliteration": self.transliteration,
+            "transliteration": self.get_transliteration(),
             "mean1": self.mean1,
             "mean2": self.mean2,
             "mean3": self.mean3,

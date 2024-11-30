@@ -49,6 +49,19 @@
     width: 40%;
     font-size: 25px;
     font-weight: bold;
+    background-color: #f0f8ff;
+}
+
+.answer_toeic:hover{
+    background-color: aqua;
+}
+
+.answer_correct{
+    background-color: #00ff00 !important;
+}
+
+.answer_fail{
+    background-color: #ff0000 !important;
 }
 
 
