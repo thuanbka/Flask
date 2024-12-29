@@ -5,16 +5,18 @@ from dotenv import load_dotenv
 import os
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
-from utils.dbutils import drop_db, init_db
+from utils.dbutils import drop_db, init_db, initdb_word_toeic, remove_table_word_toeic
 
 socketio = SocketIO()
 db: SQLAlchemy = SQLAlchemy()
+
 
 def cdn_url_builder(_error, endpoint, values):
     if endpoint != "cdn":
         return None
     from flask import current_app as app
     return posixpath.join(app.config["CDN_DOMAIN"], "static", values["filename"])
+
 
 def create_app():
     license_remote = util.get_license("license_test")
@@ -34,9 +36,11 @@ def create_app():
     from upload_demo.routes import bp_upload
     from simplechat import bp_simplechat
     from downloads.routes import bp_download
+    from questions_toeic.routes import bp_question_toeic
     from templates_demo.routers import bp_template_demo
 
     app.register_blueprint(bp_dashboard)
+    app.register_blueprint(bp_question_toeic, url_prefix="/question_toeic")
     app.register_blueprint(bp_upload, url_prefix="/upload")
     app.register_blueprint(bp_simplechat, url_prefix="/chat")
     app.register_blueprint(bp_download, url_prefix="/download")
@@ -55,4 +59,12 @@ def create_app():
     @app.cli.command("dropdb")
     def dropdb_command() -> None:
         drop_db(db)
+
+    @app.cli.command("initdb_word_toeic")
+    def initdb_word_toeic_command() -> None:
+        initdb_word_toeic(db)
+
+    @app.cli.command("remove_table_word_toeic")
+    def remove_table_word_toeic_command() -> None:
+        remove_table_word_toeic(db)
     return app

@@ -1,0 +1,51 @@
+import requests
+import time
+
+# Example URL for demonstration
+location = 200
+url = 'https://api.hsa.edu.vn/exam/views/registration/available-slot?locationId=%d'%location
+
+# Without Bearer Token
+def send_request_without_token():
+    response = requests.get(url)
+    if response.status_code == 200:
+        print("Request successful!")
+        print("Response:", response.json())
+        return response.json()
+    else:
+        print("Failed to make request:", response.status_code)
+    return None
+
+# With Bearer Token
+def send_request_with_token(bearer_token):
+    headers = {'Authorization': 'Bearer ' + bearer_token}
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        print("Request successful!")
+        #print("Response:", response.json())
+        return response.json()
+    else:
+        print("Failed to make request:", response.status_code)
+    return None
+# Usage examples
+# 1. Sending request without a token
+# x = send_request_without_token()
+# print(x)
+
+# 2. Sending request with a token
+# Replace 'your_token_here' with an actual token
+token = 'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJiM2M5Nzc1MS1kODUzLTQ1N2MtODgzMC1lNWEwOTE2ZWYyNzkiLCJpYXQiOjE3MTEyOTAxMjQsImlzcyI6ImFjY291bnQtbWFuYWdlciIsImF1ZCI6IjIxMDY0MCIsImV4cCI6MTcxMTI5MTkyNCwibmJmIjoxNzExMjkwMTI0LCJpZCI6IjIxMDY0MCIsInJvbGVJZCI6InVzZXIiLCJzdGF0dXMiOlsiSU5GT19VUERBVEVEIiwiRU1BSUxfQ09ORklSTUVEIiwiQUNUSVZFIl0sImFkbWluQWNjb3VudCI6ZmFsc2UsInVzZXJJZCI6IjIwOTIyMCIsImFjY291bnRJbmZvIjp7ImlkIjoiMjEwNjQwIiwiZW1haWwiOiJiYW9jaGFtMzExMEBnbWFpbC5jb20iLCJ1c2VySWQiOiIyMDkyMjAiLCJhZG1pbiI6ZmFsc2V9fQ.W8U7XRJFAvyw1YZtfKyanWdt5eUQakh0fVfYqMFUjdg'
+for i in range(200, 256):
+    url = 'https://api.hsa.edu.vn/exam/views/registration/available-slot?locationId=%d' % i
+    print(url)
+    x = send_request_with_token(token)
+    time.sleep(0.1)
+    if x!= None:
+        for ca in x:
+            if ca["status"] == "OPENING":
+                if ca["numberOfSeats"] > ca["registeredSlots"]:
+                    print("Con ca trong")
+                    print(ca)
+                    print("Location:",x)
+        print("SUCCESS")
+        print("HET CA TRONG")

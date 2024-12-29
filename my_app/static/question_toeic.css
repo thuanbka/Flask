@@ -1,0 +1,78 @@
+.home-question-toeic{
+    text-align: center;
+}
+
+.list-option-test{
+    font-size: 25px;
+    text-align: left;
+}
+
+.list-option-test:hover{
+   color: #ff5533;
+}
+
+.test_question{
+    text-align: center;
+}
+
+#list-test-question{
+    text-align: center;
+    width: 80%;
+    margin: 0 auto;
+}
+
+#list-test-question button{
+    margin: 10px;
+    border-radius: 10px;
+    padding: 10px;
+    width: 15%;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+#list-test-question button:hover{
+    background-color: #0fc2c9 !important;
+}
+
+.list_answer{
+    text-align: center;
+    width: 60%;
+    margin: 0 auto;
+}
+
+.answer_toeic{
+    white-space: normal;
+    word-break: break-word;
+    margin: 20px 2%;
+    border-radius: 10px;
+    padding: 10px;
+    width: 40%;
+    font-size: 25px;
+    font-weight: bold;
+    background-color: #f0f8ff;
+}
+
+.answer_toeic:hover{
+    background-color: aqua;
+}
+
+.answer_correct{
+    background-color: #00ff00 !important;
+}
+
+.answer_fail{
+    background-color: #ff0000 !important;
+}
+
+
+#question_toeic{
+    white-space: normal;
+    word-break: break-word;
+    margin: 0 auto;
+    border-radius: 10px;
+    padding: 10px;
+    width: 60%;
+    font-size: 25px;
+    font-weight: bold;
+    border: 1px solid;
+}

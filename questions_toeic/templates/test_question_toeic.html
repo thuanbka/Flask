@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='question_toeic.css') }}">
+    <title>Test Toeic</title>
+</head>
+
+<body>
+    <div class="test_question">
+        <h1> This is test toeic for <span id="user_name">{{user_name}}</span></h1>
+        <div id="title-test-toeic"></div>
+        <div class="test-toeic">
+            <div id="question_toeic"></div>
+            <div class="list_answer">
+                <button type="button" id="answer_a" class="answer_toeic" onclick="Check_Answer(this.id, 0)">Answer A</button>
+                <button type="button" id="answer_b" class="answer_toeic" onclick="Check_Answer(this.id, 1)">Answer B</button>
+                <button type="button" id="answer_c" class="answer_toeic" onclick="Check_Answer(this.id, 2)">Answer C</button>
+                <button type="button" id="answer_d" class="answer_toeic" onclick="Check_Answer(this.id, 3)">Answer D</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        var set_question_id = {{ set_question_id| tojson}}
+    </script>
+    <script src="{{ url_for('static', filename='test_question_toeic.js') }}"></script>
+</body>
+
+</html>
