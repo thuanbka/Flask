@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<title>HAPPY NEW YEAR!!!</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='templates/fire_flower.css') }}">
+
+<body>
+    <audio id="music" autoplay>
+        <source src="{{ url_for('static', filename='templates//fire_work.mp3') }}" type="audio/mp3" >
+    </audio>
+    <div class="control-music">
+        <button onclick="playAudio()" type="button">Play Audio</button>
+        <button onclick="pauseAudio()" type="button">Pause Audio</button> 
+    </div>
+    <canvas id="canvas">Canvas is not supported in your browser.</canvas>
+</body>
+<script type="text/javascript" src="{{ url_for('static', filename='templates/fire_flower.js') }}"></script>
+
+</html>

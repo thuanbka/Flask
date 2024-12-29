@@ -1,0 +1,22 @@
+/* basic styles for black background and crosshair cursor */
+body {
+	background: #000;
+	margin: 0;
+}
+
+canvas {
+	cursor: crosshair;
+	display: block;
+}
+
+.control-music{
+	z-index: 10;
+	margin-top: 5px;
+}
+
+.control-music button{
+	font-size: 20px;
+	padding: 5px;
+	border-radius: 5px;
+	background-color: #10b6d3;
+}
