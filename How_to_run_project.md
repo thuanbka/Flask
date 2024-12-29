@@ -11,7 +11,7 @@ python -m venv my_virtual
 
 # Install requirement:
 
-pip install -r requirement.txt
+pip install -r requirements.txt
 
 # Init database postgres:
 
