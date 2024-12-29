@@ -5,7 +5,7 @@ pytest
 requests
 pydrive
 google-auth-oauthlib
-Flask-SocketIO
+Flask-SocketIO==5.4.1
 psycopg2-binary
 SQLAlchemy
 Flask-SQLAlchemy
