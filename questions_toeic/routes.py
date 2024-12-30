@@ -12,6 +12,7 @@ bp_question_toeic = Blueprint(
     "question_toeic", __name__, template_folder="templates")
 SUCCESS_MESSENGER = "sucsess"
 EXPIRED_TIME = 3600
+NUMBER_SET = 30
 
 
 @bp_question_toeic.route("/", methods=["GET"])
@@ -48,16 +49,29 @@ def set_generate_question_user():
         if not data or 'username' not in data:
             return handle_before_response({'error': 'Invalid data'}), 401
         else:
-            len_list_word = db.session.query(WordToeic).count()
-            result_generate = handle_question_word.create_data_question_user(
-                db=db, user_name=data["username"], len_questions=len_list_word, number_sets=30)
-            if result_generate:
-                if SUPPORT_FRONT_END:
-                    return handle_before_response({'message': 'Generate successful'})
+            #check number sets for user
+            user = (
+                db.session.query(User)
+                .filter(User.username == data["username"])
+                .first()
+            )
+            if user != None:
+                list_set_questions = db.session.query(SetQuestion).filter(SetQuestion.user_id == user.id).order_by(SetQuestion.name_set).all()
+                if len(list_set_questions) != NUMBER_SET:
+                    len_list_word = db.session.query(WordToeic).count()
+                    result_generate = handle_question_word.create_data_question_user(
+                        db=db, user_name=data["username"], len_questions=len_list_word, number_sets=NUMBER_SET)
+                    if result_generate:
+                        if SUPPORT_FRONT_END:
+                            return handle_before_response({'message': 'Generate successful'})
+                        else:
+                            return handle_before_response({'message': 'Generate successful'})
+                    else:
+                        return handle_before_response({'error': 'Generate question Failed'}), 405
                 else:
-                    return handle_before_response({'message': 'Generate successful'})
+                    return handle_before_response({'error': 'Generate question Failed: %s has been generate question before.' %(data["username"])}), 405
             else:
-                return handle_before_response({'error': 'Generate question Failed'}), 405
+                return handle_before_response({'error': 'Invalid username:%s' % data["username"]}), 401
     except Exception as ex:
         print("Error: %s" % (str(ex)))
         return handle_before_response({'error': 'Have error from server'}), 500

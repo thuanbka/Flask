@@ -2,5 +2,5 @@
 *pycache*
 uploads/*
 *virtualenv*
-.vscode
+*.vscode*
 *virtual*
