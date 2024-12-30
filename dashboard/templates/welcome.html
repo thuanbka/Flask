@@ -10,6 +10,9 @@
 </head>
 
 <body>
+    <a href="{{ url_for('question_toeic.get_test_question') }}?user_name={{user.username}}">
+        <button type="button" id="button-login">Get test toeic!</button>
+    </a>
     <div id="container-text-three-js"></div>
      <script>
         var userName = {{ user.username|tojson }};
