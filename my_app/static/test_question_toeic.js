@@ -5,6 +5,8 @@ const ResultStatus = {
 };
 
 const MAX_ERROR = 3;
+const MAX_LEVEL = 3;
+const MAX_TOTAL_ERROR = 5;
 var list_question_in_set = null;
 var number_screen = 0;
 var list_vocabulary = null;
@@ -15,7 +17,7 @@ var answer_correct = 0;
 var has_answer = false;
 var level_test = 1;
 var question_test = 0;
-var count_error = 0;
+var list_count_error = [0, 0, 0, 0];
 const element_question = document.getElementById("question_toeic");
 const element_answerA = document.getElementById("answer_a");
 const element_answerB = document.getElementById("answer_b");
@@ -112,7 +114,17 @@ function GetRandomAnswer(answer){
             }
         }
     }
-    SetAnswerUI(x, list_vocabulary[answer]["mean1"]);
+    switch(level_test){
+        case 1: 
+            SetAnswerUI(x, list_vocabulary[answer]["mean1"]);
+            break;
+        case 2:
+            SetAnswerUI(x, list_vocabulary[answer]["word"]);
+            break;
+        case 3:
+            SetAnswerUI(x, list_vocabulary[answer]["transliteration"]);
+            break;
+    }
     answer_correct = x;
 }
 
@@ -140,6 +152,7 @@ async function UpdateUIQuestion(level, answer){
             break;
         case 3:
             element_question.innerText = list_vocabulary[list_question_in_set[answer]]["mean1"];
+            GetRandomAnswer(list_question_in_set[answer]);
             break;
     }
 }
@@ -194,7 +207,8 @@ function UpdateResult(result) {
     }
 }
 
-function Check_Answer(id ,answer){
+async function Check_Answer(id ,answer){
+
     let button_element = document.getElementById(id);
     let time_out = 1000;
     if(has_answer == false){
@@ -204,24 +218,60 @@ function Check_Answer(id ,answer){
             button_element.classList.add("answer_correct");
         }
         else{
-            count_error++;
+            list_count_error[level_test]++;
             button_element.classList.add("answer_fail");
             list_element[answer_correct].classList.add("answer_correct");
         }
         question_test++;
         if(question_test>=length_question){
-            if(count_error < MAX_ERROR){
+            if(list_count_error[level_test] < MAX_ERROR){
+                let text = "Happy pass level " + level_test  + "!";
+                text += "\n";
+                text += "Result: " + (length_question - list_count_error[level_test]) + "/" + length_question
+                alert(text);
                 level_test += 1;
-                count_error == 0;
-                alert("Happy pass!");
+                if(level_test > MAX_LEVEL){
+                    await HandleEndTest();
+                    return;
+                }
             }
             else{
-                alert("Test again!");
+                let text = "Test again!";
+                text += "\n";
+                text += "Failed: " + list_count_error[level_test] + "/" + length_question
+                alert(text);
+                list_count_error[level_test] = 0;
             }
             question_test = 0;
         }
         setTimeout(UpdateUIQuestion, time_out, level_test, question_test);
     }
+}
+
+async function HandleEndTest(){
+
+    let total_count_error = 0;
+    let status = UpdateResult(ResultStatus.UNTESTED);
+    for(let i =0; i<MAX_LEVEL;i++)
+    {
+        total_count_error += list_count_error[i];
+    }
+    
+    if(total_count_error > MAX_TOTAL_ERROR){
+        let text = "Test Failed!";
+        text += "\n";
+        text += "Failed: " + total_count_error;
+        alert(text);
+        status = ResultStatus.FAILED;
+    }
+    else{
+        let text = "Test Passed!";
+        text += "\n";
+        text += "Happy you!";
+        status = ResultStatus.PASS;
+    }
+    await UpdateResult(status);
+    return;
 }
 
 

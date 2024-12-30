@@ -22,7 +22,8 @@
         </div>
     </div>
     <script>
-        var set_question_id = {{ set_question_id| tojson}}
+        var set_question_id = {{ set_question_id| tojson}};
+        var user_name = {{user_name| tojson}};
     </script>
     <script src="{{ url_for('static', filename='test_question_toeic.js') }}"></script>
 </body>
